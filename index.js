@@ -90,6 +90,7 @@ Car.prototype.drawControls = function (){
 
 var car = new Car();
 var input = {
+    turning: 0,
     turningLeft: false,
     turningRight: false,
     accelerating: false,
@@ -147,12 +148,12 @@ function resetGame() {
 }
 
 function update() {
-    if (input.turningLeft) {
-        car.turn -= 0.1;
-    }
-    if (input.turningRight) {
-        car.turn += 0.1;
-    }
+    if (input.turningLeft) input.turning -= 0.01;
+    if (input.turningRight) input.turning += 0.01;
+
+    car.turn += input.turning;
+    input.turning *= 0.9;
+
     if (input.accelerating) {
         // accelerating to a maximum
         car.speed += Math.min((200 - car.speed) * 0.02, 0.5);
