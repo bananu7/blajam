@@ -236,10 +236,20 @@ function load() {
     
     getScore =  function() {return 0;}
 
-    setTimeout(function() {
-       var otherCVS = document.getElementById('driving-canvas');
-       getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage, donuts, police,ploliceFlip, explosionImage);
-    }, 1000);
+    var allImages = donuts.concat(police, carImage, treeImage, police, ploliceFlip, explosionImage);
+
+    var token = setInterval(function() {
+       var allDone = allImages.every(function(image) {
+            return image.complete;
+       });
+
+       if (allDone) {
+            var otherCVS = document.getElementById('driving-canvas');
+            getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage, donuts, police,ploliceFlip, explosionImage);
+            clearInterval(token);
+       }
+
+    }, 100);
 
    }
 
