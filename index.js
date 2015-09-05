@@ -13,7 +13,7 @@ function Car () {
 Car.prototype.drawControls = function (){
     function drawSteeringWheel(turn) {
         var px = 300;
-        var py = 400;
+        var py = 280;
         var r = 50;
 
         ctx.save();
@@ -36,6 +36,7 @@ Car.prototype.drawControls = function (){
         var maxSpeedometerSpeed = 200;
 
         ctx.save();
+            // disc
             ctx.translate(px, py);
             ctx.fillStyle = "black";
             halfCircle (ctx, 0, 0, r);
@@ -65,6 +66,19 @@ Car.prototype.drawControls = function (){
         ctx.restore();
     }
 
+    function drawPedals() {
+        var px = 300;
+        var py = 350;
+
+        ctx.save();
+            ctx.translate(px, py);
+            ctx.fillStyle = "#eeeeee";
+            ctx.fillRect(-60, 0, 50, 100);
+            ctx.fillRect(10, 0, 50, 100);
+        ctx.restore();
+    }
+
+    drawPedals();
     drawSpeedoMeter(this.speed);
     drawSteeringWheel(this.turn);
 }
@@ -75,7 +89,9 @@ Car.prototype.drawControls = function (){
 var car = new Car();
 var input = {
     turningLeft: false,
-    turningRight: false
+    turningRight: false,
+    accelerating: false,
+    braking: false
 }
 ;
 var getScore;
