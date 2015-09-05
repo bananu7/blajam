@@ -44,8 +44,6 @@ function run(ctx, width, height, car) {
         carYPosition += carDY;
         carXPosition += carDX;
 
-        console.log(carYPosition, carXPosition);
-
         draw(yPosition);
 
         window.requestAnimationFrame(step);
