@@ -146,12 +146,15 @@ function update() {
         car.turn += 0.1;
     }
     if (input.accelerating) {
-        car.speed += 5;
+        car.speed += 0.5;
     }
     if (input.braking) {
-        car.speed -= 10;
+        car.speed -= 0.10;
     }
     if (car.speed < 0) car.speed = 0;
+
+    // slowing to a minimum
+    car.speed -= (car.speed - 20) * 0.002;
 
     ctx.fillStyle = "#5C5C5C";
     ctx.fillRect(0, 0, cvs.width, cvs.height);
