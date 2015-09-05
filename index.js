@@ -225,7 +225,13 @@ function load() {
         donuts.push(newDonut);
     }
 
+    var police = new Image();
+    police.src = "police_helicopter.png"
+
+    var ploliceFlip = new Image();
+    ploliceFlip.src = "police_helicopter_flip.png";
+
     var otherCVS = document.getElementById('driving-canvas');
-    getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage, donuts);
+    getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage, donuts, police,ploliceFlip);
 }
 

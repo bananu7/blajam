@@ -34,7 +34,6 @@ function calcSceneryColour(distance) {
     var i = Math.floor(distance / sceneryWidth);
     var nextScenery = sceneries[i + 1 < sceneries.length ? i+1 : 0];
     
-        console.log(distance, i);
     var ca = sceneries[i].colour;
     var cb = nextScenery.colour;
     r = lerp(e, ca.r, cb.r);
@@ -46,7 +45,7 @@ function calcSceneryColour(distance) {
 
 var nextDonut = 0;
 
-function run(ctx, canvas, car, carImage, treeImage, donuts) {
+function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) {
     var width = canvas.width;
     var height = canvas.height;
 
@@ -175,7 +174,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts) {
         var dx = car.xPosition - helicopter.xPosition;
 
         var angle = Math.atan2(dx, dy);
-        
+        helicopter.turn = angle;
         helicopter.yPosition += magnitude * Math.cos(angle);
         helicopter.xPosition += magnitude * Math.sin(angle);
     }
@@ -219,9 +218,19 @@ function run(ctx, canvas, car, carImage, treeImage, donuts) {
             ctx.drawImage(donuts[projectile.type],projectile.xPosition -donutRadius/2, projectile.yPosition-donutRadius/2 + yPos, donutRadius, donutRadius);
         }
 
-        ctx.fillStyle = "black";
         helicopters.forEach(function(helicopter) {
-            ctx.fillRect(helicopter.xPosition -10, helicopter.yPosition-10 + yPos, 20, 20);
+            ctx.translate(helicopter.xPosition, helicopter.yPosition + yPos);
+            var angle = (-Math.PI/2 - helicopter.turn + 2*Math.PI) % (2*Math.PI);
+            if (angle > Math.PI/2 && angle < Math.PI*1.5) {
+                ctx.rotate(angle - Math.PI);
+                ctx.drawImage(flipPolice,-40, -15, 81, 30);
+                ctx.rotate(-angle + Math.PI);
+            } else {
+                ctx.rotate(angle);
+                ctx.drawImage(police,-40, -15, 81, 30);
+                ctx.rotate(-angle);
+            }
+            ctx.translate(-helicopter.xPosition, -(helicopter.yPosition + yPos));
         });
 
         ctx.fillStyle = "red";
@@ -253,7 +262,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts) {
     }
 
     function haveLost() {
-        return helicoptersIsTooClose() || isOutOfScreen(car) || notInRoad();
+        return false;// helicoptersIsTooClose() || isOutOfScreen(car) || notInRoad();
     }
 
     function distance(thing1, thing2) {
@@ -269,7 +278,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts) {
         projectileCooldown -= dTime;
         if (projectileCooldown < 0) projectileCooldown = 0;
 
-        car.magnitude = dTime * .04 * car.speed/100;
+        car.magnitude = dTime * .1 * car.speed/100;
         var dY = -car.magnitude * Math.cos(car.turn);
         var dX = car.magnitude * Math.sin(car.turn);        
         
