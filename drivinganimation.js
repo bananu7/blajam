@@ -33,6 +33,8 @@ var projectileCooldown = 0;
 var helicopterSpawnInterval = difficulty.initialHelicopterSpawnInterval;
 var nextHelicopterSpawn = difficulty.helicopterSpawnStart;
 
+var started = false;
+
 function lerp(e, a, b) {
     return (b-a) * e + a;
 }
@@ -79,7 +81,13 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
     canvas.addEventListener('mousedown', function(e){
         lastX = e.offsetX;
         lastY = e.offsetY;
-        launchProjectile();
+        if (started == false) {
+            started = true;
+            lastTime = performance.now();
+            window.requestAnimationFrame(step);
+        } else {
+            launchProjectile();
+        }
     });
 
     canvas.addEventListener('mousemove', function(e){
@@ -96,7 +104,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
     }
 
     var yPosition = 0;
-    var lastTime = performance.now();
+    var lastTime;
 
     car.yPosition = height-10;
     car.xPosition = getRoadCenter(-car.yPosition) - 30;
@@ -373,13 +381,14 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
         draw(yPosition);
 
         if (haveLost()) {
+            ctx.fillStyle = "#808080";
             ctx.fillRect(0, 0, width, height);
 
             ctx.fillStyle = "Black";
             ctx.font = "20pt sans";
 
             ctx.fillText("You Have " + getLoseReason(), 50, 150);
-            ctx.fillText("Your score was " + getScore()*10 + " centimeters", 50, 200);
+            ctx.fillText("Your score was " + getScore()*100 + " centimeters", 50, 200);
 
             ctx.font = "16pt sans";
             ctx.fillText("Please reload to try again", 50, 250);
@@ -394,7 +403,30 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
         window.requestAnimationFrame(step);
     }
 
-    window.requestAnimationFrame(step);
+
+
+    ctx.fillStyle = "#808080";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = "Black";
+    ctx.font = "20pt sans";
+
+    ctx.fillText("Welcome to Criminal Chase", 50, 50);
+
+    ctx.font = "16pt sans";
+    ctx.fillText("You are a master theif, with a sweet ride", 50, 100);
+    ctx.drawImage(carImage, 50, 105, 75, 75);
+    ctx.fillText("You have just sucessed in a grand donut heist", 50, 200);
+    ctx.drawImage(donuts[0], 50, 205, 75, 75);
+    ctx.fillText("However, the police are after you", 50, 300);
+    ctx.drawImage(flipPolice, 50, 305, 162, 60);
+    ctx.fillText("Drive with the arrow keys or WASD", 50, 400);
+    ctx.fillText("Shoot with your mouse", 50, 425);
+    ctx.fillText("How many centimeters can you go?", 50, 450);
+
+    ctx.fillStyle = "Red";
+    ctx.font = "20pt sans";
+    ctx.fillText("Click To Start", 200, 480);
 
     function getScore() {
         return Math.floor(yPosition);

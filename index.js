@@ -233,8 +233,13 @@ function load() {
 
     var explosionImage = new Image();
     explosionImage.src = "explosion.png"
+    
+    getScore =  function() {return 0;}
 
-    var otherCVS = document.getElementById('driving-canvas');
-    getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage, donuts, police,ploliceFlip, explosionImage);
-}
+    setTimeout(function() {
+       var otherCVS = document.getElementById('driving-canvas');
+       getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage, donuts, police,ploliceFlip, explosionImage);
+    }, 1000);
+
+   }
 
