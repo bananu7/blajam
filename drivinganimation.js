@@ -3,6 +3,37 @@ var roadWidth = 150;
 var treeWidth = 40;
 var treeHeight = 40;
 
+function calcSceneryColour(distance) {
+    var scenery = [
+        {pos: 0, colour: {r: 0, g: 102, b: 0}}, // nice grass
+        {pos: 30, colour: {r: 153, g: 153, b: 102}}, // plains
+        {pos: 60, colour: {r: 204, g: 153, b: 0}}, // desert
+        {pos: 90, colour: {r: 102, g: 153, b: 153}} // ice plains
+    ];
+
+    // loop sceneries
+    distance = distance % 90;
+
+    function lerp(e, a, b) {
+        return (b-a) * e + a;
+    }
+
+    var r, g, b;
+
+    for (var i = 1; i < scenery.length; i++) {
+        if (scenery[i].pos > distance) {
+            var e = (scenery[i].pos - distance) / (scenery[i].pos - scenery[i-1].pos);
+            var cb = scenery[i-1].colour;
+            var ca = scenery[i].colour;
+            r = lerp(e, ca.r, cb.r);
+            g = lerp(e, ca.g, cb.g);
+            b = lerp(e, ca.b, cb.b);
+            break;
+        }
+    }
+
+    return "rgb(" + Math.floor(r) + "," + Math.floor(g) + "," + Math.floor(b) + ")";
+}
 
 function run(ctx, width, height, car, carImage, treeImage) {
     var yPosition = 0;
@@ -47,6 +78,8 @@ function run(ctx, width, height, car, carImage, treeImage) {
     genTrees();
 
     function draw(yPos) {
+        ctx.fillStyle = calcSceneryColour(getScore());
+        ctx.fillRect(0, 0, width, height);
 
         ctx.fillStyle = "black";
         for (var roadSegment = 0; roadSegment < numSegments; roadSegment++) {
@@ -86,9 +119,7 @@ function run(ctx, width, height, car, carImage, treeImage) {
         var dTime = timestamp - lastTime;
         lastTime = timestamp;
 
-        yPosition += dTime * .01;
-
-        ctx.clearRect(0, 0, width, height);
+        yPosition += dTime * .01;        
 
         car.magnitude = dTime * .04 * car.speed/100;
         car.dY = -car.magnitude * Math.cos(car.turn);
