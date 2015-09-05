@@ -1,6 +1,9 @@
-function run(ctx, width, height) {
+function run(ctx, width, height, car) {
     var yPosition = 0;
     var lastTime = performance.now();
+
+    var carYPosition = height;
+    var carXPosition = getRoadCenter(carYPosition);
 
     function getRoadCenter(y) {
         return Math.sin(y/100) * (width /2) + width/2
@@ -8,8 +11,9 @@ function run(ctx, width, height) {
 
     function draw(yPos) {
         var numSegments = 100;
-        var roadWidth = 100;
+        var roadWidth = 150;
 
+        ctx.fillStyle = "black";
         for (var roadSegment = 0; roadSegment < numSegments; roadSegment++) {
             var roadStart = (roadSegment/numSegments) * height;
             var roadEnd = (roadSegment +1)/numSegments * height;
@@ -19,18 +23,28 @@ function run(ctx, width, height) {
 
             ctx.fillRect(roadCenterStart-roadWidth/2, roadStart, roadWidth, height/numSegments);
         }
+
+        ctx.fillStyle = "green";
+        ctx.fillRect(carXPosition, carYPosition - yPos, 10, 10);
     }
 
     function step(timestamp) {
-        
-
-
         var dTime = timestamp - lastTime;
         lastTime = timestamp;
 
         yPosition += dTime * .01;
 
         ctx.clearRect(0, 0, width, height);
+
+
+        carMagnitude = dTime * .01;
+        carDY = -carMagnitude * Math.cos(car.turn);
+        carDX = carMagnitude * Math.sin(car.turn);
+
+        carYPosition += carDY;
+        carXPosition += carDX;
+
+        console.log(carYPosition, carXPosition);
 
         draw(yPosition);
 

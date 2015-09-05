@@ -22,7 +22,7 @@ Car.prototype.drawControls = function (){
         ctx.rotate(turn);
 
         circle(ctx, 0, 0, r);
-        line (ctx, 0, 0, 0, r);
+        line (ctx, 0, 0, 0, -r);
 
         ctx.restore();
     }
@@ -102,9 +102,7 @@ function load() {
 
     var updateFn = setInterval(update, 32); // 30fps
 
-    console.log("test");
-
     var otherCVS = document.getElementById('driving-canvas');
-    run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height);
+    run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height, car);
 }
 
