@@ -37,3 +37,25 @@ canvas {
     padding: 20px;
     text-align: right;
 }
+
+#scores {
+    padding: 60px;
+}
+
+#scores tr:nth-child(2) {
+    background-color: #FFD829;
+}
+
+#scores tr:nth-child(3)  {
+    background-color: #E4E4E4;
+}
+
+#scores tr:nth-child(4)  {
+    background-color: #CC640E;
+}
+
+#scores td,th {
+    padding: 5px;
+    font-family: Arial, sans-serif;
+    min-width: 100px;
+}
