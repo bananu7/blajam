@@ -69,7 +69,7 @@ function calcSceneryColour(distance) {
 
 var nextDonut = 0;
 
-function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) {
+function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, explosionImage) {
     var width = canvas.width;
     var height = canvas.height;
 
@@ -269,9 +269,8 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) 
             ctx.translate(-helicopter.xPosition, -(helicopter.yPosition + yPos));
         });
 
-        ctx.fillStyle = "red";
         explosions.forEach(function(explosion) {
-            ctx.fillRect(explosion.xPosition -10, explosion.yPosition-10 + yPos, 20, 20);
+            ctx.drawImage(explosionImage,explosion.xPosition -20, explosion.yPosition-20 + yPos, 40, 40);
         });
 
     }
@@ -293,18 +292,27 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) 
 
     function helicoptersIsTooClose() {
         return helicopters.some(function(helicopter) {
-            return distance(helicopter, car) <= 20;
+            return distance(helicopter, car) <= 40;
         });
     }
 
     function haveLost() {
-        return false;// helicoptersIsTooClose() || isOutOfScreen(car) || notInRoad();
+        return helicoptersIsTooClose() || isOutOfScreen(car) || notInRoad();
     }
 
     function distance(thing1, thing2) {
         var dx = thing1.xPosition - thing2.xPosition;
         var dy = thing1.yPosition - thing2.yPosition;
         return Math.sqrt(dx*dx + dy*dy);
+    }
+
+    function getLoseReason() {
+        if (helicoptersIsTooClose()) {
+            return "Been Caught By The Cops";
+        }
+        if (isOutOfScreen(car) || notInRoad()) {
+            return "Driven Off The Road"
+        }
     }
 
     function step(timestamp) {
@@ -346,7 +354,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) 
         var nextHelicopters = [];
         projectiles.forEach(function(projectile) {
             helicopters.forEach(function(helicopter) {
-                if (distance(projectile, helicopter) < 10) {
+                if (distance(projectile, helicopter) < 40) {
                     explosions.push({xPosition: helicopter.xPosition, yPosition: helicopter.yPosition, timeLeft: 1000});
                     projectile.hasHit = true;
                     helicopter.hasHit = true;
@@ -365,7 +373,18 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) 
         draw(yPosition);
 
         if (haveLost()) {
-            alert("You lose");
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.fillStyle = "Black";
+            ctx.font = "20pt sans";
+
+            ctx.fillText("You Have " + getLoseReason(), 50, 150);
+            ctx.fillText("Your score was " + getScore()*10 + " centimeters", 50, 200);
+
+            ctx.font = "16pt sans";
+            ctx.fillText("Please reload to try again", 50, 250);
+
+
             didThePlayerLoseTheGameYet = true;
             return;
         }
