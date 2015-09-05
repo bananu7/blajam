@@ -37,12 +37,15 @@ Car.prototype.drawControls = function (){
 
         ctx.save();
             ctx.translate(px, py);
+            ctx.fillStyle = "black";
             halfCircle (ctx, 0, 0, r);
-            line (ctx, -r, 0, r, 0);
+            ctx.fill();
 
             function speedToArc(speed) {
                 return (speed / maxSpeedometerSpeed) * 3.14  - 3.14;
             }
+
+            ctx.strokeStyle = "white";
 
             // measurements
             for (var i = 0; i < maxSpeedometerSpeed; i += 10) {
@@ -56,7 +59,7 @@ Car.prototype.drawControls = function (){
             ctx.save();
                 ctx.lineWidth = 8;
                 ctx.rotate(speedToArc(speed));
-                line (ctx, 0, 0, r-10, 0);
+                line (ctx, 0, 0, r-15, 0);
             ctx.restore();
 
         ctx.restore();
