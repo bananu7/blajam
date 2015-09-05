@@ -337,12 +337,12 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
         projectileCooldown -= dTime;
         if (projectileCooldown < 0) projectileCooldown = 0;
 
-        car.magnitude = dTime * .1 * car.speed/100;
+        car.magnitude = dTime * .15 * car.speed/100;
         var dY = -car.magnitude * Math.cos(car.turn);
         var dX = car.magnitude * Math.sin(car.turn);        
         
-        var gameSpeed = dTime * .02 - dY * .5;
-        gameSpeed = Math.max(gameSpeed, -dY*0.9);
+        var gameSpeed = dTime * .02 - dY * .3;
+        gameSpeed = Math.max(gameSpeed, -dY*0.4);
         yPosition += gameSpeed
 
         car.yPosition += dY;
@@ -351,7 +351,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
         checkIfTreeIsOver();
 
         for (var i = 0; i < projectiles.length; i++) {
-            updateProjectile(projectiles[i], dTime * .04);
+            updateProjectile(projectiles[i], dTime * .2);
         }
 
         helicopters.forEach(function(helicopter) {
