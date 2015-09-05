@@ -188,7 +188,10 @@ function load() {
     var carImage = new Image();
     carImage.src = "car.png";
 
+    var treeImage = new Image();
+    treeImage.src = "tree.png";
+
     var otherCVS = document.getElementById('driving-canvas');
-    getScore = run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height, car, carImage);
+    getScore = run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height, car, carImage, treeImage);
 }
 

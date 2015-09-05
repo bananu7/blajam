@@ -1,7 +1,10 @@
 var numSegments = 1000;
 var roadWidth = 150;
+var treeWidth = 40;
+var treeHeight = 40;
 
-function run(ctx, width, height, car, carImage) {
+
+function run(ctx, width, height, car, carImage, treeImage) {
     var yPosition = 0;
     var lastTime = performance.now();
 
@@ -15,15 +18,29 @@ function run(ctx, width, height, car, carImage) {
     var trees = [];
     var numTrees = 10;
     function genTree(yPos) {
-        var nextY = Math.random()*20 + yPos;
-        var nextX = Math.random()*width;
+        var nextY = -Math.random()*5 + yPos;
+        var roadX = getRoadCenter(-nextY);
 
-        return {x: nextX, y:nextY};
+        while (true) {
+            var nextX = Math.random()*width;
+
+            if (nextX < (roadX - roadWidth/2 - treeWidth) || nextX > (roadX + roadWidth/2 + treeWidth)) {
+                return {x: nextX, y: nextY};
+            }
+        }
     }
 
     function genTrees() {
         for (var i =0 ; i < numTrees; i++)  {
             trees.push(genTree(yPosition + height/numTrees * i));
+        }
+    }
+
+    function checkIfTreeIsOver() {
+        for (var i = 0; i < numTrees; i++) {
+            if ((trees[i].y + yPosition - treeHeight) > height) {
+                trees[i] = genTree(-yPosition);
+            }
         }
     }
 
@@ -44,7 +61,7 @@ function run(ctx, width, height, car, carImage) {
 
         ctx.fillStyle = "green";
         for (var i =0; i < numTrees; i++) {
-            ctx.fillRect(trees[i].x, trees[i].y + yPos, 20,20);
+            ctx.drawImage(treeImage, trees[i].x - treeWidth/2, trees[i].y + yPos - treeHeight/2, treeWidth, treeHeight);
         }
        
         ctx.translate(+(car.xPosition), +(car.yPosition + yPos));
@@ -79,6 +96,8 @@ function run(ctx, width, height, car, carImage) {
 
         car.yPosition += car.dY;
         car.xPosition += car.dX;
+
+        checkIfTreeIsOver();
 
         draw(yPosition);
 
