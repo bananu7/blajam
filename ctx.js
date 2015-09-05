@@ -1,21 +1,19 @@
 "use strict";
 
-var ctx;
-
-function ctxInit() {
-    var cvs = document.getElementById('cvs');
-    ctx = cvs.getContext('2d');
-    ctx.line = line; 
+function ctxInit(id) {
+    var cvs = document.getElementById(id);
+    var ctx = cvs.getContext('2d');
+    return ctx;
 }
 
-function line(x1, y1, x2, y2) {
+function line(ctx, x1, y1, x2, y2) {
     ctx.beginPath();
     ctx.moveTo(x1,y1);
     ctx.lineTo(x2,y2);
     ctx.stroke();
 }
 
-function circle(x, y, r) {
+function circle(ctx, x, y, r) {
     ctx.beginPath();
     ctx.arc(x, y, r, 0,2*Math.PI);
     ctx.stroke();

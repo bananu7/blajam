@@ -1,5 +1,8 @@
 'use strict';
 
+var ctx;
+var cvs;
+
 function Car () {
     this.turn = 0;
     this.speed = 100;
@@ -18,8 +21,8 @@ Car.prototype.drawControls = function (){
         ctx.translate(px, py);
         ctx.rotate(turn);
 
-        circle(0, 0, r);
-        line (0, 0, 0, r);
+        circle(ctx, 0, 0, r);
+        line (ctx, 0, 0, 0, r);
 
         ctx.restore();
     }
@@ -69,6 +72,7 @@ function keyUp(e) {
 }
 
 function update() {
+    console.log("???");
     if (input.turningLeft) {
         car.turn -= 0.1;
     }
@@ -81,10 +85,17 @@ function update() {
 }
 
 function load() {
-    ctxInit();
+    ctx = ctxInit('other-canvas');
+    cvs = document.getElementById('other-canvas');
+
     window.addEventListener("keydown", keyDown, true);
     window.addEventListener("keyup", keyUp, true);
 
     var updateFn = setInterval(update, 32); // 30fps
+
+    console.log("test");
+
+    var otherCVS = document.getElementById('driving-canvas');
+    run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height);
 }
 
