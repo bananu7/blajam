@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <title>Criminal Chase - Highscores</title>
+    <meta charset="utf-8">
+    <meta author="bananu7 and Lalalaland">
+    <link rel="stylesheet" href="style.css" type="text/css">
+
+    <script src="https://cdn.firebase.com/js/client/2.2.9/firebase.js"></script>
+    <script type="text/javascript">
+
+    var firebaseRef = new Firebase("https://criminal-chase.firebaseio.com/");
+    var topResults = firebaseRef.orderByChild("score").limitToFirst(20).once('value', function(scores) {
+
+        var scoresArray = [];
+        scores.forEach(function(score) {
+            scoresArray.push({
+                name: score.val().name,
+                score: score.val().score
+            });
+        });
+        scoresArray.reverse();
+
+        var scoresTab = document.getElementById("scores");
+        scoresArray.forEach(function(score) {
+            var tr = document.createElement('tr');
+            var nameTd = document.createElement('td');
+            nameTd.innerText = score.name;
+
+            var scoreTd = document.createElement('td');
+            scoreTd.innerText = score.score;
+
+            tr.appendChild(nameTd);
+            tr.appendChild(scoreTd);
+
+            scoresTab.appendChild(tr);
+        });
+    });
+
+    </script>
+</head>
+<body>
+    <div id="center">
+        <table id="scores">
+        </table>
+    </div>
+</body>
+</html>
