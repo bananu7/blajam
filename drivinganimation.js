@@ -6,7 +6,9 @@ var hardDifficulty = {
     sceneryWidth: 3000,
     helicopterSpawnStart: 600,
     initialHelicopterSpawnInterval: 100,
-    helicopterSpawnIntervalDecrease: 0.9,
+    helicopterSpawnIntervalDecrease: 0.98,
+    roadBounds: 0,
+    roadCurviness: 2, // <0.5, 2>
 };
 
 var normalDifficulty = {
@@ -17,6 +19,8 @@ var normalDifficulty = {
     helicopterSpawnStart: 6000,
     initialHelicopterSpawnInterval: 100,
     helicopterSpawnIntervalDecrease: 0.9,
+    roadBounds: 0.3,
+    roadCurviness: 1,
 };
 
 var difficulty = hardDifficulty;
@@ -110,7 +114,10 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
     car.xPosition = getRoadCenter(-car.yPosition) - 30;
 
     function getRoadCenter(y) {
-        return Math.sin(y/100) * (width /2) + width/2
+        var e = Math.sin((y / 100) * difficulty.roadCurviness) * Math.cos((y/500) * difficulty.roadCurviness);
+        e *= 1 - difficulty.roadBounds;
+
+        return e * (width /2) + width/2;dw
     }
 
     var trees = [];
@@ -334,7 +341,8 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
         var dY = -car.magnitude * Math.cos(car.turn);
         var dX = car.magnitude * Math.sin(car.turn);        
         
-        var gameSpeed = dTime * .02 - dY * .2;
+        var gameSpeed = dTime * .02 - dY * .5;
+        gameSpeed = Math.max(gameSpeed, -dY*0.9);
         yPosition += gameSpeed
 
         car.yPosition += dY;
