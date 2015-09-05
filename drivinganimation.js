@@ -9,7 +9,7 @@ function run(ctx, width, height, car, carImage) {
     var carXPosition = getRoadCenter(carYPosition) + 30;
 
     function getRoadCenter(y) {
-        return Math.sin(y/100) * (width /2) + width/2
+        return Math.sin(y/1000) * (width /2) + width/2
     }
 
     function draw(yPos) {
@@ -51,7 +51,7 @@ function run(ctx, width, height, car, carImage) {
 
         ctx.clearRect(0, 0, width, height);
 
-        carMagnitude = dTime * .04;
+        carMagnitude = dTime * .04 * car.speed/100;
         carDY = -carMagnitude * Math.cos(car.turn);
         carDX = carMagnitude * Math.sin(car.turn);
 
