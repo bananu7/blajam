@@ -6,22 +6,16 @@
     <meta author="bananu7 and Lalalaland">
     <link rel="stylesheet" href="style.css" type="text/css">
 
-    <style>
-        * { box-sizing: border-box; }
-        canvas, table, td { border: 1px solid black; }
-        table { width: 600px; }
-        table thead { font-weight: bold; }
-        td { padding: 3px; }
-    </style>
-
     <script type="text/javascript" src="ctx.js"></script>
     <script type="text/javascript" src="drivinganimation.js"></script>
     <script type="text/javascript" src="index.js"></script>
 
 </head>
 <body onload="load()">
-    <canvas id="driving-canvas" width="600" height="500"> </canvas>
-    <canvas id="other-canvas" width="600" height="500"> </canvas>
-    <div id="scorebox">0</div>
+    <div id="center">
+        <canvas id="driving-canvas" width="600" height="500"></canvas>
+        <canvas id="other-canvas" width="600" height="500"> </canvas>
+        <div id="scorebox">0</div>
+    </div>
 </body>
 </html>
