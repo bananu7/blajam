@@ -10,7 +10,7 @@
     <script type="text/javascript">
 
     var firebaseRef = new Firebase("https://criminal-chase.firebaseio.com/");
-    var topResults = firebaseRef.orderByChild("score").limitToFirst(20).once('value', function(scores) {
+    var topResults = firebaseRef.orderByChild("score").limitToLast(20).once('value', function(scores) {
 
         var scoresArray = [];
         scores.forEach(function(score) {
