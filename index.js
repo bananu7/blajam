@@ -3,6 +3,8 @@
 var ctx;
 var cvs;
 
+var projectiles;
+
 function Car () {
     this.turn = 0;
     this.speed = 100;
@@ -108,15 +110,19 @@ function drawScore() {
 function keyDown(e) {
     switch (e.keyCode) {
         case 37: // left arrow
+        case 65: // A
             input.turningLeft = true;
         break;
         case 38: // up arrow
+        case 87: // W
             input.accelerating = true;
         break;
         case 39: // right arrow
+        case 68: // D
             input.turningRight = true;
         break;
         case 40: // down arrow
+        case 83: // S
             input.braking = true;
         break;
     }
@@ -127,15 +133,19 @@ function keyDown(e) {
 function keyUp(e) {
     switch (e.keyCode) {
         case 37: // left arrow
+        case 65: // A
             input.turningLeft = false;
         break;
         case 38: // up arrow
+        case 87: // W
             input.accelerating = false;
         break;
         case 39: // right arrow
+        case 68: // D
             input.turningRight = false;
         break;
         case 40: // down arrow
+        case 83: // S
             input.braking = false;
         break;
     }

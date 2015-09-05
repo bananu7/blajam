@@ -3,6 +3,8 @@ var roadWidth = 150;
 var treeWidth = 40;
 var treeHeight = 40;
 
+var projectiles = [];
+
 function calcSceneryColour(distance) {
     var sceneries = [
         {colour: {r: 0, g: 102, b: 0}}, // nice grass
@@ -108,8 +110,6 @@ function run(ctx, canvas, car, carImage, treeImage) {
     }
 
     genTrees();
-
-    var projectiles = [];
 
     function launchProjectile() {
         var nextProjectile = {
