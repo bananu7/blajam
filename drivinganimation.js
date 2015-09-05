@@ -4,15 +4,20 @@ var treeWidth = 40;
 var treeHeight = 40;
 
 function calcSceneryColour(distance) {
-    var scenery = [
-        {pos: 0, colour: {r: 0, g: 102, b: 0}}, // nice grass
-        {pos: 30, colour: {r: 153, g: 153, b: 102}}, // plains
-        {pos: 60, colour: {r: 204, g: 153, b: 0}}, // desert
-        {pos: 90, colour: {r: 102, g: 153, b: 153}} // ice plains
+    var sceneries = [
+        {colour: {r: 0, g: 102, b: 0}}, // nice grass
+        {colour: {r: 153, g: 153, b: 102}}, // plains
+        {colour: {r: 204, g: 153, b: 0}}, // desert
+        {colour: {r: 102, g: 153, b: 153}}, // tundra
+        {colour: {r: 204, g: 255, b: 255}} // ice plains
     ];
 
+    var sceneryWidth = 300;
     // loop sceneries
-    distance = distance % 90;
+    if (distance < 0)
+        distance = 0;
+
+    distance = distance % (sceneryWidth * sceneries.length);
 
     function lerp(e, a, b) {
         return (b-a) * e + a;
@@ -20,17 +25,15 @@ function calcSceneryColour(distance) {
 
     var r, g, b;
 
-    for (var i = 1; i < scenery.length; i++) {
-        if (scenery[i].pos > distance) {
-            var e = (scenery[i].pos - distance) / (scenery[i].pos - scenery[i-1].pos);
-            var cb = scenery[i-1].colour;
-            var ca = scenery[i].colour;
-            r = lerp(e, ca.r, cb.r);
-            g = lerp(e, ca.g, cb.g);
-            b = lerp(e, ca.b, cb.b);
-            break;
-        }
-    }
+    var e = (distance % sceneryWidth) / sceneryWidth;
+    var i = Math.floor(distance / sceneryWidth);
+    var nextScenery = sceneries[i + 1 < sceneries.length ? i+1 : 0];
+    
+    var ca = sceneries[i].colour;
+    var cb = nextScenery.colour;
+    r = lerp(e, ca.r, cb.r);
+    g = lerp(e, ca.g, cb.g);
+    b = lerp(e, ca.b, cb.b);
 
     return "rgb(" + Math.floor(r) + "," + Math.floor(g) + "," + Math.floor(b) + ")";
 }
@@ -66,7 +69,7 @@ function run(ctx, canvas, car, carImage, treeImage) {
     var yPosition = 0;
     var lastTime = performance.now();
 
-    car.yPosition = height-1;
+    car.yPosition = height-10;
     car.xPosition = getRoadCenter(-car.yPosition) - 30;
 
     function getRoadCenter(y) {
@@ -181,16 +184,19 @@ function run(ctx, canvas, car, carImage, treeImage) {
 
     function step(timestamp) {
         var dTime = timestamp - lastTime;
-        lastTime = timestamp;
-
-        yPosition += dTime * .01;        
+        lastTime = timestamp;      
 
         car.magnitude = dTime * .04 * car.speed/100;
         car.dY = -car.magnitude * Math.cos(car.turn);
-        car.dX = car.magnitude * Math.sin(car.turn);
+        car.dX = car.magnitude * Math.sin(car.turn);        
+        
+        var gameSpeed = dTime * .02 - car.dY * .2;
+        yPosition += gameSpeed
 
-        car.yPosition += car.dY;
+        car.yPosition += car.dY;        
         car.xPosition += car.dX;
+
+        console.log(gameSpeed);
 
         checkIfTreeIsOver();
 
