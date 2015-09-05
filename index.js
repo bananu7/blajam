@@ -192,6 +192,6 @@ function load() {
     treeImage.src = "tree.png";
 
     var otherCVS = document.getElementById('driving-canvas');
-    getScore = run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height, car, carImage, treeImage);
+    getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage);
 }
 

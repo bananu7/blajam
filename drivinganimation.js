@@ -35,7 +35,34 @@ function calcSceneryColour(distance) {
     return "rgb(" + Math.floor(r) + "," + Math.floor(g) + "," + Math.floor(b) + ")";
 }
 
-function run(ctx, width, height, car, carImage, treeImage) {
+
+
+function run(ctx, canvas, car, carImage, treeImage) {
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var lastY = 0;
+    var lastX = 0;
+
+    canvas.addEventListener('mousedown', function(e){
+        lastX = e.offsetX;
+        lastY = e.offsetY;
+        launchProjectile();
+    });
+
+    canvas.addEventListener('mousemove', function(e){
+        lastX = e.offsetX;
+        lastY = e.offsetY;
+    });
+
+    function getDirectionToMouse() {
+        var dy = lastY - (car.yPosition + yPosition);
+        var dx = lastX - car.xPosition;
+
+        var angle = Math.atan2(dx, dy);
+        return angle;
+    }
+
     var yPosition = 0;
     var lastTime = performance.now();
 
@@ -77,6 +104,23 @@ function run(ctx, width, height, car, carImage, treeImage) {
 
     genTrees();
 
+    var projectiles = [];
+
+    function launchProjectile() {
+        var nextProjectile = {
+            xPosition: car.xPosition, 
+            yPosition: car.yPosition,
+            turn: getDirectionToMouse()
+        };
+        updateProjectile(nextProjectile, 40);
+        projectiles.push(nextProjectile);
+    }
+
+    function updateProjectile(projectile, magnitude) {
+        projectile.yPosition += magnitude * Math.cos(projectile.turn);
+        projectile.xPosition += magnitude * Math.sin(projectile.turn);
+    }
+
     function draw(yPos) {
         ctx.fillStyle = calcSceneryColour(getScore());
         ctx.fillRect(0, 0, width, height);
@@ -101,7 +145,19 @@ function run(ctx, width, height, car, carImage, treeImage) {
         ctx.rotate((-Math.PI/2 + car.turn));
         ctx.drawImage(carImage, -20, -20, 40, 40);
         ctx.rotate(-(-Math.PI/2 + car.turn));
+
+        ctx.fillStyle = "grey";
+        ctx.rotate(-getDirectionToMouse());
+        ctx.fillRect(-5, -5, 10, 50);
+        ctx.rotate(getDirectionToMouse());
+
         ctx.translate(-(car.xPosition), -(car.yPosition + yPos));
+
+        ctx.fillStyle = "blue";
+        for (var i = 0; i < projectiles.length; i++) {
+            var projectile = projectiles[i];
+            ctx.fillRect(projectile.xPosition -10, projectile.yPosition-10 + yPos, 20, 20);
+        }
     }
 
     function notInRoad() {
@@ -109,10 +165,18 @@ function run(ctx, width, height, car, carImage, treeImage) {
         return (car.xPosition < (roadCenter - roadWidth/2) || car.xPosition > (roadCenter + roadWidth/2));
     }
 
+    function isOutOfScreen(thing, radius) {
+        if (!radius) {
+            radius = 0;
+        }
+
+        var offOfRoadSides = (thing.xPosition + radius < 0 || thing.xPosition - radius> width);
+        var offOfRoadTop = (thing.yPosition + yPosition + radius) < 0 || (thing.yPosition + yPosition - radius) > height;
+        return offOfRoadTop || offOfRoadSides;
+    }
+
     function haveLost() {
-        var offOfRoadSides = (car.xPosition < 0 || car.xPosition > width);
-        var offOfRoadTop = (car.yPosition + yPosition) < 0 || (car.yPosition + yPosition) > height;
-        return offOfRoadSides || offOfRoadTop || notInRoad();
+        return isOutOfScreen(car) || notInRoad();
     }
 
     function step(timestamp) {
@@ -129,6 +193,16 @@ function run(ctx, width, height, car, carImage, treeImage) {
         car.xPosition += car.dX;
 
         checkIfTreeIsOver();
+
+        for (var i = 0; i < projectiles.length; i++) {
+            updateProjectile(projectiles[i], dTime * .04);
+        }
+
+        projectiles = projectiles.filter(function(projectile) {
+            return !isOutOfScreen(projectile, 10);
+        });
+
+        console.log(projectiles.length);
 
         draw(yPosition);
 
