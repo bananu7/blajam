@@ -40,6 +40,7 @@ var helicopterSpawnInterval = difficulty.initialHelicopterSpawnInterval;
 var nextHelicopterSpawn = difficulty.helicopterSpawnStart;
 
 var started = false;
+var willSubmitScore = false;
 
 function lerp(e, a, b) {
     return (b-a) * e + a;
@@ -87,6 +88,19 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
     canvas.addEventListener('mousedown', function(e){
         lastX = e.offsetX;
         lastY = e.offsetY;
+        if (willSubmitScore) {
+            // save the highscore
+
+            var firebaseRef = new Firebase("https://criminal-chase.firebaseio.com/");
+            var name = window.prompt("Please provide your name");
+            if (name) {
+                var newRecord = firebaseRef.push();
+                newRecord.set({ name:name, score: getScore() * 100, date:new Date().getTime() });
+            }
+
+            willSubmitScore = false;
+        }
+
         if (started == false) {
             started = true;
             lastTime = performance.now();
@@ -119,7 +133,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
         var e = Math.sin((y / 100) * difficulty.roadCurviness) * Math.cos((y/500) * difficulty.roadCurviness);
         e *= 1 - difficulty.roadBounds;
 
-        return e * (width /2) + width/2;dw
+        return e * (width /2) + width/2;
     }
 
     var trees = [];
@@ -402,18 +416,11 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
 
             ctx.font = "16pt sans";
             ctx.fillText("Please reload to try again", 50, 250);
+            ctx.fillText("Click to sumbit a score", 50, 300);
 
+            willSubmitScore = true;
 
             didThePlayerLoseTheGameYet = true;
-
-            // save the highscore
-
-            var firebaseRef = new Firebase("https://criminal-chase.firebaseio.com/");
-            var name = window.prompt("Please provide your name");
-            if (name) {
-                var newRecord = firebaseRef.push();
-                newRecord.set({ name:name, score: getScore() * 100, date:new Date().getTime() });
-            }
 
             return;
         }
