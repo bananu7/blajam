@@ -1,12 +1,12 @@
 var numSegments = 1000;
 var roadWidth = 150;
 
-function run(ctx, width, height, car) {
+function run(ctx, width, height, car, carImage) {
     var yPosition = 0;
     var lastTime = performance.now();
 
     var carYPosition = height-1;
-    var carXPosition = getRoadCenter(carYPosition);
+    var carXPosition = getRoadCenter(carYPosition) + 30;
 
     function getRoadCenter(y) {
         return Math.sin(y/100) * (width /2) + width/2
@@ -24,9 +24,12 @@ function run(ctx, width, height, car) {
 
             ctx.fillRect(roadCenterStart-roadWidth/2, roadStart, roadWidth, height/numSegments);
         }
-
-        ctx.fillStyle = "green";
-        ctx.fillRect(carXPosition, carYPosition - yPos, 10, 10);
+       
+        ctx.translate(+(carXPosition), +(carYPosition -yPos));
+        ctx.rotate((-Math.PI/2 + car.turn));
+        ctx.drawImage(carImage, -20, -20, 40, 40);
+        ctx.rotate(-(-Math.PI/2 + car.turn));
+        ctx.translate(-(carXPosition), -(carYPosition -yPos));
     }
 
     function notInRoad() {

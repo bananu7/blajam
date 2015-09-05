@@ -171,7 +171,10 @@ function load() {
 
     var updateFn = setInterval(update, 32); // 30fps
 
+    var carImage = new Image();
+    carImage.src = "car.png";
+
     var otherCVS = document.getElementById('driving-canvas');
-    getScore = run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height, car);
+    getScore = run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height, car, carImage);
 }
 
