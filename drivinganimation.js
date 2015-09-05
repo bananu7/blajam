@@ -1,12 +1,41 @@
+// constants
+var hardDifficulty = {
+    maxRoadWidth: 300,
+    minRoadWidth: 100,
+    projectileReloadTime: 1000,
+    sceneryWidth: 3000,
+    helicopterSpawnStart: 600,
+    initialHelicopterSpawnInterval: 100,
+    helicopterSpawnIntervalDecrease: 0.9,
+};
+
+var normalDifficulty = {
+    maxRoadWidth: 300,
+    minRoadWidth: 100,
+    projectileReloadTime: 1000,
+    sceneryWidth: 3000,
+    helicopterSpawnStart: 6000,
+    initialHelicopterSpawnInterval: 100,
+    helicopterSpawnIntervalDecrease: 0.9,
+};
+
+var difficulty = hardDifficulty;
+
+// dynamic values
 var numSegments = 1000;
-var roadWidth = 150;
+var roadWidth = difficulty.maxRoadWidth;
 var treeWidth = 40;
 var treeHeight = 40;
 
 var projectiles = [];
 var donutRadius = 30;
 var projectileCooldown = 0;
-var projectileReloadTime = 1000;
+var helicopterSpawnInterval = difficulty.initialHelicopterSpawnInterval;
+var nextHelicopterSpawn = difficulty.helicopterSpawnStart;
+
+function lerp(e, a, b) {
+    return (b-a) * e + a;
+}
 
 function calcSceneryColour(distance) {
     var sceneries = [
@@ -17,21 +46,16 @@ function calcSceneryColour(distance) {
         {colour: {r: 204, g: 255, b: 255}} // ice plains
     ];
 
-    var sceneryWidth = 300;
     // loop sceneries
     if (distance < 0)
         distance = 0;
 
-    distance = distance % (sceneryWidth * sceneries.length);
-
-    function lerp(e, a, b) {
-        return (b-a) * e + a;
-    }
+    distance = distance % (difficulty.sceneryWidth * sceneries.length);
 
     var r, g, b;
 
-    var e = (distance % sceneryWidth) / sceneryWidth;
-    var i = Math.floor(distance / sceneryWidth);
+    var e = (distance % difficulty.sceneryWidth) / difficulty.sceneryWidth;
+    var i = Math.floor(distance / difficulty.sceneryWidth);
     var nextScenery = sceneries[i + 1 < sceneries.length ? i+1 : 0];
     
     var ca = sceneries[i].colour;
@@ -56,7 +80,6 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) 
         lastX = e.offsetX;
         lastY = e.offsetY;
         launchProjectile();
-        addHelicopter();
     });
 
     canvas.addEventListener('mousemove', function(e){
@@ -177,6 +200,19 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) 
         helicopter.turn = angle;
         helicopter.yPosition += magnitude * Math.cos(angle);
         helicopter.xPosition += magnitude * Math.sin(angle);
+    }
+
+    function adjustDifficulty(distance) {
+        if (distance < 0)
+            distance = 0;
+
+        roadWidth = lerp(1 - distance / 10000, difficulty.minRoadWidth, difficulty.maxRoadWidth);
+
+        if (distance > nextHelicopterSpawn) {
+            addHelicopter();
+            nextHelicopterSpawn += helicopterSpawnInterval;
+            helicopterSpawnInterval *= difficulty.helicopterSpawnIntervalDecrease;
+        }
     }
 
     var explosions = [];
@@ -333,6 +369,8 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice) 
             didThePlayerLoseTheGameYet = true;
             return;
         }
+
+        adjustDifficulty(getScore());
 
         window.requestAnimationFrame(step);
     }
