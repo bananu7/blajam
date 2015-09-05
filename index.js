@@ -30,17 +30,25 @@ Car.prototype.drawControls = function (){
     drawSteeringWheel(this.turn);
 }
 
+// Actual game state
+// Global because fuck it
+
 var car = new Car();
 var input = {
     turningLeft: false,
     turningRight: false
 }
 
+var score = 0;
+function drawScore() {
+    var $scorebox = document.getElementById('scorebox');
+    $scorebox.innerText = score + 'm';
+}
+
 function keyDown(e) {
     switch (e.keyCode) {
         case 37: // left arrow
             input.turningLeft = true;
-            console.log('left');
         break;
         case 38: // up arrow
         break;
@@ -72,7 +80,6 @@ function keyUp(e) {
 }
 
 function update() {
-    console.log("???");
     if (input.turningLeft) {
         car.turn -= 0.1;
     }
@@ -82,6 +89,8 @@ function update() {
 
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     car.drawControls();
+    score += car.speed * 0.10;
+    drawScore();
 }
 
 function load() {
