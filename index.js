@@ -102,7 +102,7 @@ var didThePlayerLoseTheGameYet;
 
 function drawScore() {
     var $scorebox = document.getElementById('scorebox');
-    $scorebox.innerText = getScore() + 'm';
+    $scorebox.innerText = getScore()*100 + ' centimeters';
 }
 
 function keyDown(e) {
