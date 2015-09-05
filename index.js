@@ -146,10 +146,11 @@ function update() {
         car.turn += 0.1;
     }
     if (input.accelerating) {
-        car.speed += 0.5;
+        // accelerating to a maximum
+        car.speed += Math.min((200 - car.speed) * 0.02, 0.5);
     }
     if (input.braking) {
-        car.speed -= 0.10;
+        car.speed -= 0.5;
     }
     if (car.speed < 0) car.speed = 0;
 
