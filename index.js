@@ -12,11 +12,12 @@ function Car () {
 
 Car.prototype.drawControls = function (){
     function drawSteeringWheel(turn) {
-        var px = 100;
-        var py = 100;
+        var px = 300;
+        var py = 400;
         var r = 50;
 
         ctx.save();
+        ctx.lineWidth = 5;
 
         ctx.translate(px, py);
         ctx.rotate(turn);
@@ -27,6 +28,41 @@ Car.prototype.drawControls = function (){
         ctx.restore();
     }
 
+    function drawSpeedoMeter(speed) {
+        var px = 300;
+        var py = 200;
+        var r = 150;
+
+        var maxSpeedometerSpeed = 200;
+
+        ctx.save();
+            ctx.translate(px, py);
+            halfCircle (ctx, 0, 0, r);
+            line (ctx, -r, 0, r, 0);
+
+            function speedToArc(speed) {
+                return (speed / maxSpeedometerSpeed) * 3.14  - 3.14;
+            }
+
+            // measurements
+            for (var i = 0; i < maxSpeedometerSpeed; i += 10) {
+                ctx.save();
+                ctx.rotate(speedToArc(i));
+                line (ctx, r, 0, r-10, 0);
+                ctx.restore();
+            }
+
+            // dial
+            ctx.save();
+                ctx.lineWidth = 8;
+                ctx.rotate(speedToArc(speed));
+                line (ctx, 0, 0, r-10, 0);
+            ctx.restore();
+
+        ctx.restore();
+    }
+
+    drawSpeedoMeter(this.speed);
     drawSteeringWheel(this.turn);
 }
 
@@ -87,7 +123,8 @@ function update() {
         car.turn += 0.1;
     }
 
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    ctx.fillStyle = "#5C5C5C";
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
     car.drawControls();
     drawScore();
 }

@@ -18,3 +18,9 @@ function circle(ctx, x, y, r) {
     ctx.arc(x, y, r, 0,2*Math.PI);
     ctx.stroke();
 }
+
+function halfCircle(ctx, x, y, r) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, - Math.PI, 0);
+    ctx.stroke();
+}
