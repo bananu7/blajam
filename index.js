@@ -6,6 +6,8 @@ var cvs;
 function Car () {
     this.turn = 0;
     this.speed = 100;
+    this.xPosition = 150;
+    this.yPosition = 300;
 
     return this;
 }
@@ -92,9 +94,11 @@ var input = {
     turningRight: false,
     accelerating: false,
     braking: false
-}
-;
+};
+
 var getScore;
+var didThePlayerLoseTheGameYet;
+
 function drawScore() {
     var $scorebox = document.getElementById('scorebox');
     $scorebox.innerText = getScore() + 'm';
@@ -138,6 +142,10 @@ function keyUp(e) {
     return false;
 }
 
+function resetGame() {
+    car = new Car;
+}
+
 function update() {
     if (input.turningLeft) {
         car.turn -= 0.1;
@@ -161,6 +169,10 @@ function update() {
     ctx.fillRect(0, 0, cvs.width, cvs.height);
     car.drawControls();
     drawScore();
+
+    if (didThePlayerLoseTheGameYet){
+        resetGame();
+    }
 }
 
 function load() {

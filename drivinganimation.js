@@ -5,8 +5,8 @@ function run(ctx, width, height, car, carImage) {
     var yPosition = 0;
     var lastTime = performance.now();
 
-    var carYPosition = height-1;
-    var carXPosition = getRoadCenter(-carYPosition) - 30;
+    car.yPosition = height-1;
+    car.xPosition = getRoadCenter(-car.yPosition) - 30;
 
     function getRoadCenter(y) {
         return Math.sin(y/100) * (width /2) + width/2
@@ -25,8 +25,6 @@ function run(ctx, width, height, car, carImage) {
         for (var i =0 ; i < numTrees; i++)  {
             trees.push(genTree(yPosition + height/numTrees * i));
         }
-
-        console.log(trees);
     }
 
     genTrees();
@@ -49,22 +47,21 @@ function run(ctx, width, height, car, carImage) {
             ctx.fillRect(trees[i].x, trees[i].y + yPos, 20,20);
         }
        
-        ctx.translate(+(carXPosition), +(carYPosition + yPos));
+        ctx.translate(+(car.xPosition), +(car.yPosition + yPos));
         ctx.rotate((-Math.PI/2 + car.turn));
         ctx.drawImage(carImage, -20, -20, 40, 40);
         ctx.rotate(-(-Math.PI/2 + car.turn));
-        ctx.translate(-(carXPosition), -(carYPosition + yPos));
+        ctx.translate(-(car.xPosition), -(car.yPosition + yPos));
     }
 
     function notInRoad() {
-        var roadCenter = getRoadCenter(-carYPosition);
-        return (carXPosition < (roadCenter - roadWidth/2) || carXPosition > (roadCenter + roadWidth/2));
+        var roadCenter = getRoadCenter(-car.yPosition);
+        return (car.xPosition < (roadCenter - roadWidth/2) || car.xPosition > (roadCenter + roadWidth/2));
     }
 
     function haveLost() {
-        var offOfRoadSides = (carXPosition < 0 || carXPosition > width);
-        var offOfRoadTop = (carYPosition + yPosition) < 0 || (carYPosition + yPosition) > height;
-        console.log(carYPosition, yPosition, offOfRoadSides, offOfRoadTop, notInRoad());
+        var offOfRoadSides = (car.xPosition < 0 || car.xPosition > width);
+        var offOfRoadTop = (car.yPosition + yPosition) < 0 || (car.yPosition + yPosition) > height;
         return offOfRoadSides || offOfRoadTop || notInRoad();
     }
 
@@ -76,17 +73,18 @@ function run(ctx, width, height, car, carImage) {
 
         ctx.clearRect(0, 0, width, height);
 
-        carMagnitude = dTime * .04 * car.speed/100;
-        carDY = -carMagnitude * Math.cos(car.turn);
-        carDX = carMagnitude * Math.sin(car.turn);
+        car.magnitude = dTime * .04 * car.speed/100;
+        car.dY = -car.magnitude * Math.cos(car.turn);
+        car.dX = car.magnitude * Math.sin(car.turn);
 
-        carYPosition += carDY;
-        carXPosition += carDX;
+        car.yPosition += car.dY;
+        car.xPosition += car.dX;
 
         draw(yPosition);
 
         if (haveLost()) {
             alert("You lose");
+            didThePlayerLoseTheGameYet = true;
             return;
         }
 
