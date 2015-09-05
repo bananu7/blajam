@@ -148,7 +148,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
         if (projectileCooldown > 0)
             return;
 
-        projectileCooldown += projectileReloadTime;
+        projectileCooldown += difficulty.projectileReloadTime;
 
         var nextProjectile = {
             xPosition: car.xPosition, 

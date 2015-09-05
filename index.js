@@ -4,7 +4,7 @@ var ctx;
 var cvs;
 
 var projectileCooldown;
-var projectileReloadTime;
+var difficulty;
 
 function Car () {
     this.turn = 0;
@@ -110,7 +110,7 @@ function drawScore() {
 }
 
 function drawProjectileCooldown() {
-    var e = 1 - projectileCooldown / projectileReloadTime;
+    var e = 1 - projectileCooldown / difficulty.projectileReloadTime;
 
     var px = 50, py = 150;
     var w = 50, h = 300;
