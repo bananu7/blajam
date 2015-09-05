@@ -106,11 +106,13 @@ function keyDown(e) {
             input.turningLeft = true;
         break;
         case 38: // up arrow
+            input.accelerating = true;
         break;
         case 39: // right arrow
             input.turningRight = true;
         break;
         case 40: // down arrow
+            input.braking = true;
         break;
     }
 
@@ -123,11 +125,13 @@ function keyUp(e) {
             input.turningLeft = false;
         break;
         case 38: // up arrow
+            input.accelerating = false;
         break;
         case 39: // right arrow
             input.turningRight = false;
         break;
         case 40: // down arrow
+            input.braking = false;
         break;
     }
 
@@ -141,6 +145,13 @@ function update() {
     if (input.turningRight) {
         car.turn += 0.1;
     }
+    if (input.accelerating) {
+        car.speed += 5;
+    }
+    if (input.braking) {
+        car.speed -= 10;
+    }
+    if (car.speed < 0) car.speed = 0;
 
     ctx.fillStyle = "#5C5C5C";
     ctx.fillRect(0, 0, cvs.width, cvs.height);
