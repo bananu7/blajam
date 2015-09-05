@@ -5,6 +5,8 @@ var treeHeight = 40;
 
 var projectiles = [];
 var donutRadius = 30;
+var projectileCooldown = 0;
+var projectileReloadTime = 1000;
 
 function calcSceneryColour(distance) {
     var sceneries = [
@@ -113,6 +115,11 @@ function run(ctx, canvas, car, carImage, treeImage, donuts) {
     genTrees();
 
     function launchProjectile() {
+        if (projectileCooldown > 0)
+            return;
+
+        projectileCooldown += projectileReloadTime;
+
         var nextProjectile = {
             xPosition: car.xPosition, 
             yPosition: car.yPosition,
@@ -258,6 +265,9 @@ function run(ctx, canvas, car, carImage, treeImage, donuts) {
     function step(timestamp) {
         var dTime = timestamp - lastTime;
         lastTime = timestamp;      
+
+        projectileCooldown -= dTime;
+        if (projectileCooldown < 0) projectileCooldown = 0;
 
         car.magnitude = dTime * .04 * car.speed/100;
         var dY = -car.magnitude * Math.cos(car.turn);

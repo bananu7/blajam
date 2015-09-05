@@ -3,7 +3,8 @@
 var ctx;
 var cvs;
 
-var projectiles;
+var projectileCooldown;
+var projectileReloadTime;
 
 function Car () {
     this.turn = 0;
@@ -85,6 +86,7 @@ Car.prototype.drawControls = function (){
     drawPedals();
     drawSpeedoMeter(this.speed);
     drawSteeringWheel(this.turn);
+    drawProjectileCooldown();
 }
 
 // Actual game state
@@ -105,6 +107,21 @@ var didThePlayerLoseTheGameYet;
 function drawScore() {
     var $scorebox = document.getElementById('scorebox');
     $scorebox.innerText = getScore()*100 + ' centimeters';
+}
+
+function drawProjectileCooldown() {
+    var e = 1 - projectileCooldown / projectileReloadTime;
+
+    var px = 50, py = 150;
+    var w = 50, h = 300;
+
+    ctx.save();
+        ctx.fillStyle = "#FFD726";
+        ctx.fillRect(px, py + h * (1-e), w, h * e);
+        ctx.strokeStyle = "black";
+        ctx.rect(px, py, w, h);
+        ctx.stroke();
+    ctx.restore();
 }
 
 function keyDown(e) {
