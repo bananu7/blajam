@@ -29,6 +29,7 @@ function calcSceneryColour(distance) {
     var i = Math.floor(distance / sceneryWidth);
     var nextScenery = sceneries[i + 1 < sceneries.length ? i+1 : 0];
     
+        console.log(distance, i);
     var ca = sceneries[i].colour;
     var cb = nextScenery.colour;
     r = lerp(e, ca.r, cb.r);
@@ -51,6 +52,7 @@ function run(ctx, canvas, car, carImage, treeImage) {
         lastX = e.offsetX;
         lastY = e.offsetY;
         launchProjectile();
+        addHelicopter();
     });
 
     canvas.addEventListener('mousemove', function(e){
@@ -124,6 +126,48 @@ function run(ctx, canvas, car, carImage, treeImage) {
         projectile.xPosition += magnitude * Math.sin(projectile.turn);
     }
 
+    var helicopters = [];
+
+    function createHelicopter() {
+        var side = Math.random();
+
+        if (side < .25) {
+            return {
+                xPosition: 0,
+                yPosition: -yPosition + Math.random()*height
+            };
+        } else if (side < .50) {
+            return {
+                xPosition: width,
+                yPosition: -yPosition + Math.random()*height
+            };
+        } else if (side < .75) {
+            return {
+                xPosition: Math.random() * width,
+                yPosition: -yPosition
+            };
+        } else {
+            return {
+                xPosition: Math.random() * width,
+                yPosition: -yPosition + height
+            };
+        }
+    }
+
+    function addHelicopter() {
+        helicopters.push(createHelicopter());
+    }
+
+    function updateHelicopter(helicopter, magnitude) {
+        var dy = car.yPosition - helicopter.yPosition;
+        var dx = car.xPosition - helicopter.xPosition;
+
+        var angle = Math.atan2(dx, dy);
+        
+        helicopter.yPosition += magnitude * Math.cos(angle);
+        helicopter.xPosition += magnitude * Math.sin(angle);
+    }
+
     function draw(yPos) {
         ctx.fillStyle = calcSceneryColour(getScore());
         ctx.fillRect(0, 0, width, height);
@@ -161,6 +205,11 @@ function run(ctx, canvas, car, carImage, treeImage) {
             var projectile = projectiles[i];
             ctx.fillRect(projectile.xPosition -10, projectile.yPosition-10 + yPos, 20, 20);
         }
+
+        ctx.fillStyle = "black";
+        helicopters.forEach(function(helicopter) {
+            ctx.fillRect(helicopter.xPosition -10, helicopter.yPosition-10 + yPos, 20, 20);
+        })
     }
 
     function notInRoad() {
@@ -187,22 +236,24 @@ function run(ctx, canvas, car, carImage, treeImage) {
         lastTime = timestamp;      
 
         car.magnitude = dTime * .04 * car.speed/100;
-        car.dY = -car.magnitude * Math.cos(car.turn);
-        car.dX = car.magnitude * Math.sin(car.turn);        
+        var dY = -car.magnitude * Math.cos(car.turn);
+        var dX = car.magnitude * Math.sin(car.turn);        
         
-        var gameSpeed = dTime * .02 - car.dY * .2;
+        var gameSpeed = dTime * .02 - dY * .2;
         yPosition += gameSpeed
 
-        car.yPosition += car.dY;        
-        car.xPosition += car.dX;
-
-        console.log(gameSpeed);
+        car.yPosition += dY;
+        car.xPosition += dX
 
         checkIfTreeIsOver();
 
         for (var i = 0; i < projectiles.length; i++) {
             updateProjectile(projectiles[i], dTime * .04);
         }
+
+        helicopters.forEach(function(helicopter) {
+            updateHelicopter(helicopter, dTime * .05);
+        });
 
         projectiles = projectiles.filter(function(projectile) {
             return !isOutOfScreen(projectile, 10);
