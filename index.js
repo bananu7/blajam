@@ -38,11 +38,11 @@ var input = {
     turningLeft: false,
     turningRight: false
 }
-
-var score = 0;
+;
+var getScore;
 function drawScore() {
     var $scorebox = document.getElementById('scorebox');
-    $scorebox.innerText = score + 'm';
+    $scorebox.innerText = getScore() + 'm';
 }
 
 function keyDown(e) {
@@ -89,7 +89,6 @@ function update() {
 
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     car.drawControls();
-    score += car.speed * 0.10;
     drawScore();
 }
 
@@ -103,6 +102,6 @@ function load() {
     var updateFn = setInterval(update, 32); // 30fps
 
     var otherCVS = document.getElementById('driving-canvas');
-    run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height, car);
+    getScore = run(ctxInit('driving-canvas'), otherCVS.width, otherCVS.height, car);
 }
 

@@ -52,4 +52,10 @@ function run(ctx, width, height, car) {
     }
 
     window.requestAnimationFrame(step);
+
+    function getScore() {
+        return Math.floor(yPosition);
+    }
+
+    return getScore;
 }
