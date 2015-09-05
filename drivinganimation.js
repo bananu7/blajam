@@ -9,6 +9,7 @@ var hardDifficulty = {
     helicopterSpawnIntervalDecrease: 0.98,
     roadBounds: 0,
     roadCurviness: 1, // <0.5, 2>
+    roadSpeed: 0.1,
 };
 
 var normalDifficulty = {
@@ -20,10 +21,11 @@ var normalDifficulty = {
     initialHelicopterSpawnInterval: 100,
     helicopterSpawnIntervalDecrease: 0.9,
     roadBounds: 0.3,
-    roadCurviness: 1,
+    roadCurviness: 0.7,
+    roadSpeed: 0.1,
 };
 
-var difficulty = hardDifficulty;
+var difficulty = normalDifficulty;
 
 // dynamic values
 var numSegments = 1000;
@@ -110,7 +112,7 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
     var yPosition = 0;
     var lastTime;
 
-    car.yPosition = height-10;
+    car.yPosition = height - 100;
     car.xPosition = getRoadCenter(-car.yPosition) - 30;
 
     function getRoadCenter(y) {
@@ -341,8 +343,8 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
         var dY = -car.magnitude * Math.cos(car.turn);
         var dX = car.magnitude * Math.sin(car.turn);        
         
-        var gameSpeed = dTime * .02 - dY * .3;
-        gameSpeed = Math.max(gameSpeed, -dY*0.4);
+        var gameSpeed = dTime * difficulty.roadSpeed - dY * .3;
+        gameSpeed = Math.max(gameSpeed, -dY * 0.97);
         yPosition += gameSpeed
 
         car.yPosition += dY;
@@ -408,8 +410,10 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
 
             var firebaseRef = new Firebase("https://criminal-chase.firebaseio.com/");
             var name = window.prompt("Please provide your name");
-            var newRecord = firebaseRef.push();
-            newRecord.set({ name:name, score: getScore() * 100, date:new Date().getTime() });
+            if (name) {
+                var newRecord = firebaseRef.push();
+                newRecord.set({ name:name, score: getScore() * 100, date:new Date().getTime() });
+            }
 
             return;
         }
