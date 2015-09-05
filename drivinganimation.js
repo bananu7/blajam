@@ -168,6 +168,8 @@ function run(ctx, canvas, car, carImage, treeImage) {
         helicopter.xPosition += magnitude * Math.sin(angle);
     }
 
+    var explosions = [];
+
     function draw(yPos) {
         ctx.fillStyle = calcSceneryColour(getScore());
         ctx.fillRect(0, 0, width, height);
@@ -209,7 +211,13 @@ function run(ctx, canvas, car, carImage, treeImage) {
         ctx.fillStyle = "black";
         helicopters.forEach(function(helicopter) {
             ctx.fillRect(helicopter.xPosition -10, helicopter.yPosition-10 + yPos, 20, 20);
-        })
+        });
+
+        ctx.fillStyle = "red";
+        explosions.forEach(function(explosion) {
+            ctx.fillRect(explosion.xPosition -10, explosion.yPosition-10 + yPos, 20, 20);
+        });
+
     }
 
     function notInRoad() {
@@ -227,8 +235,20 @@ function run(ctx, canvas, car, carImage, treeImage) {
         return offOfRoadTop || offOfRoadSides;
     }
 
+    function helicoptersIsTooClose() {
+        return helicopters.some(function(helicopter) {
+            return distance(helicopter, car) <= 20;
+        });
+    }
+
     function haveLost() {
-        return isOutOfScreen(car) || notInRoad();
+        return helicoptersIsTooClose() || isOutOfScreen(car) || notInRoad();
+    }
+
+    function distance(thing1, thing2) {
+        var dx = thing1.xPosition - thing2.xPosition;
+        var dy = thing1.yPosition - thing2.yPosition;
+        return Math.sqrt(dx*dx + dy*dy);
     }
 
     function step(timestamp) {
@@ -252,11 +272,35 @@ function run(ctx, canvas, car, carImage, treeImage) {
         }
 
         helicopters.forEach(function(helicopter) {
-            updateHelicopter(helicopter, dTime * .05);
+            updateHelicopter(helicopter, gameSpeed*1.1);
+        });
+
+        explosions.forEach(function(explosion) {
+            explosion.timeLeft -= dTime;
+        });
+
+        explosions = explosions.filter(function(explosion){
+            return explosion.timeLeft >= 0;
+        });
+
+        var nextProjectiles = [];
+        var nextHelicopters = [];
+        projectiles.forEach(function(projectile) {
+            helicopters.forEach(function(helicopter) {
+                if (distance(projectile, helicopter) < 10) {
+                    explosions.push({xPosition: helicopter.xPosition, yPosition: helicopter.yPosition, timeLeft: 1000});
+                    projectile.hasHit = true;
+                    helicopter.hasHit = true;
+                } 
+            });
         });
 
         projectiles = projectiles.filter(function(projectile) {
-            return !isOutOfScreen(projectile, 10);
+            return !isOutOfScreen(projectile, 10) && !projectile.hasHit;
+        });
+
+        helicopters = helicopters.filter(function(helicopter) {
+            return !helicopter.hasHit;
         });
 
         console.log(projectiles.length);
