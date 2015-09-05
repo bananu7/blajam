@@ -4,6 +4,7 @@ var treeWidth = 40;
 var treeHeight = 40;
 
 var projectiles = [];
+var donutRadius = 30;
 
 function calcSceneryColour(distance) {
     var sceneries = [
@@ -41,9 +42,9 @@ function calcSceneryColour(distance) {
     return "rgb(" + Math.floor(r) + "," + Math.floor(g) + "," + Math.floor(b) + ")";
 }
 
+var nextDonut = 0;
 
-
-function run(ctx, canvas, car, carImage, treeImage) {
+function run(ctx, canvas, car, carImage, treeImage, donuts) {
     var width = canvas.width;
     var height = canvas.height;
 
@@ -115,8 +116,12 @@ function run(ctx, canvas, car, carImage, treeImage) {
         var nextProjectile = {
             xPosition: car.xPosition, 
             yPosition: car.yPosition,
-            turn: getDirectionToMouse()
+            turn: getDirectionToMouse(),
+            type: nextDonut,
         };
+
+        nextDonut = (nextDonut +1) % 5;
+
         updateProjectile(nextProjectile, 40);
         projectiles.push(nextProjectile);
     }
@@ -202,10 +207,9 @@ function run(ctx, canvas, car, carImage, treeImage) {
 
         ctx.translate(-(car.xPosition), -(car.yPosition + yPos));
 
-        ctx.fillStyle = "blue";
         for (var i = 0; i < projectiles.length; i++) {
             var projectile = projectiles[i];
-            ctx.fillRect(projectile.xPosition -10, projectile.yPosition-10 + yPos, 20, 20);
+            ctx.drawImage(donuts[projectile.type],projectile.xPosition -donutRadius/2, projectile.yPosition-donutRadius/2 + yPos, donutRadius, donutRadius);
         }
 
         ctx.fillStyle = "black";
@@ -296,14 +300,12 @@ function run(ctx, canvas, car, carImage, treeImage) {
         });
 
         projectiles = projectiles.filter(function(projectile) {
-            return !isOutOfScreen(projectile, 10) && !projectile.hasHit;
+            return !isOutOfScreen(projectile, donutRadius) && !projectile.hasHit;
         });
 
         helicopters = helicopters.filter(function(helicopter) {
             return !helicopter.hasHit;
         });
-
-        console.log(projectiles.length);
 
         draw(yPosition);
 

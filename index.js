@@ -201,7 +201,14 @@ function load() {
     var treeImage = new Image();
     treeImage.src = "tree.png";
 
+    var donuts = [];
+    for (var i =1; i <=5; i++) {
+        var newDonut = new Image();
+        newDonut.src = "donut/" + i + ".png";
+        donuts.push(newDonut);
+    }
+
     var otherCVS = document.getElementById('driving-canvas');
-    getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage);
+    getScore = run(ctxInit('driving-canvas'), otherCVS, car, carImage, treeImage, donuts);
 }
 
