@@ -4,11 +4,11 @@ var hardDifficulty = {
     minRoadWidth: 100,
     projectileReloadTime: 1000,
     sceneryWidth: 3000,
-    helicopterSpawnStart: 600,
-    initialHelicopterSpawnInterval: 100,
+    helicopterSpawnStart: 3000,
+    initialHelicopterSpawnInterval: 500,
     helicopterSpawnIntervalDecrease: 0.98,
     roadBounds: 0,
-    roadCurviness: 2, // <0.5, 2>
+    roadCurviness: 1, // <0.5, 2>
 };
 
 var normalDifficulty = {
@@ -403,6 +403,14 @@ function run(ctx, canvas, car, carImage, treeImage, donuts, police, flipPolice, 
 
 
             didThePlayerLoseTheGameYet = true;
+
+            // save the highscore
+
+            var firebaseRef = new Firebase("https://criminal-chase.firebaseio.com/");
+            var name = window.prompt("Please provide your name");
+            var newRecord = firebaseRef.push();
+            newRecord.set({ name:name, score: getScore() * 100, date:new Date().getTime() });
+
             return;
         }
 
