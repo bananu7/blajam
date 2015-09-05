@@ -1,8 +1,11 @@
+var numSegments = 1000;
+var roadWidth = 150;
+
 function run(ctx, width, height, car) {
     var yPosition = 0;
     var lastTime = performance.now();
 
-    var carYPosition = height;
+    var carYPosition = height-1;
     var carXPosition = getRoadCenter(carYPosition);
 
     function getRoadCenter(y) {
@@ -10,8 +13,6 @@ function run(ctx, width, height, car) {
     }
 
     function draw(yPos) {
-        var numSegments = 100;
-        var roadWidth = 150;
 
         ctx.fillStyle = "black";
         for (var roadSegment = 0; roadSegment < numSegments; roadSegment++) {
@@ -28,6 +29,17 @@ function run(ctx, width, height, car) {
         ctx.fillRect(carXPosition, carYPosition - yPos, 10, 10);
     }
 
+    function notInRoad() {
+        var roadCenter = getRoadCenter(carYPosition);
+        return (carXPosition < (roadCenter - roadWidth/2) || carXPosition > (roadCenter + roadWidth/2));
+    }
+
+    function haveLost() {
+        var offOfRoadSides = (carXPosition < 0 || carXPosition > width);
+        var offOfRoadTop = (carYPosition < yPosition || carYPosition > (yPosition + height));
+        return offOfRoadSides || offOfRoadTop || notInRoad();
+    }
+
     function step(timestamp) {
         var dTime = timestamp - lastTime;
         lastTime = timestamp;
@@ -36,8 +48,7 @@ function run(ctx, width, height, car) {
 
         ctx.clearRect(0, 0, width, height);
 
-
-        carMagnitude = dTime * .01;
+        carMagnitude = dTime * .04;
         carDY = -carMagnitude * Math.cos(car.turn);
         carDX = carMagnitude * Math.sin(car.turn);
 
@@ -45,6 +56,11 @@ function run(ctx, width, height, car) {
         carXPosition += carDX;
 
         draw(yPosition);
+
+        if (haveLost()) {
+            alert("You lose");
+            return;
+        }
 
         window.requestAnimationFrame(step);
     }
