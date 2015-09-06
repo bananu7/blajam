@@ -25,10 +25,10 @@
         scoresArray.forEach(function(score) {
             var tr = document.createElement('tr');
             var nameTd = document.createElement('td');
-            nameTd.innerText = score.name;
+            nameTd.textContent = score.name || "Anonymous";
 
             var scoreTd = document.createElement('td');
-            scoreTd.innerText = score.score;
+            scoreTd.textContent = score.score;
 
             tr.appendChild(nameTd);
             tr.appendChild(scoreTd);
